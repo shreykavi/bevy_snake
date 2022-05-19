@@ -41,7 +41,6 @@ fn keyboard_control(
 
 fn snake_movement(
     mut commands: Commands,
-    win_size: Res<WinSize>,
     mut snake: ResMut<Snake>,
     direction: Res<Direction>
 ){
@@ -58,8 +57,35 @@ fn snake_movement(
         Movement::Left => head.x -= 1,
     }
     snake.points.push(Point{ x: head.x, y: head.y});
+}
 
+fn draw_system(
+    mut commands: Commands, 
+    mut snake: ResMut<Snake>
+){
+    //TODO: despawn and respawn the snake 
     println!("{:?}", snake.points);
+}
+
+fn food_system(
+    mut commands: Commands, 
+){
+    //TODO: spawn food randomly
+}
+
+fn score_system(
+    mut commands: Commands, 
+    mut snake: ResMut<Snake>
+){
+    //TODO: show tally of score based on size of snake
+}
+
+fn open_menu_system(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    win_size: Res<WinSize>,
+) {
+    // TODO: Show show + a reset button for end of game
 }
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>, mut windows: ResMut<Windows>) {
@@ -99,8 +125,12 @@ fn main() {
     .add_system_set(
         SystemSet::new()
             .with_run_criteria(FixedTimestep::step(1.0)) // controls speed of snake
-            .with_system(snake_movement),
+            .with_system(snake_movement)
+            .with_system(draw_system),
     )
     .add_system(keyboard_control)
+    .add_system(food_system)
+    .add_system(score_system)
+    .add_system(open_menu_system)
     .run();
 }
