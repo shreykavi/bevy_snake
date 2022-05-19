@@ -1,0 +1,15 @@
+[package]
+name = "bevy_snake"
+version = "0.1.0"
+edition = "2021"
+
+[target.wasm32-unknown-unknown]
+runner = "wasm-server-runner"
+
+[profile.release]
+lto = "thin"
+opt-level = 's'
+
+[dependencies]
+bevy = "0.7"
+rand = "*"
