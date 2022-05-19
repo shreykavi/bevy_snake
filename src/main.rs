@@ -6,6 +6,8 @@ struct WinSize {
     h: f32,
 }
 
+struct Direction {d: Movement}
+
 #[derive(Debug)]
 struct Point {
     x: i32,
@@ -24,21 +26,22 @@ enum Movement {
 fn snake_movement(
     mut commands: Commands,
     win_size: Res<WinSize>,
-    mut snake: ResMut<Snake>
-    // mut query: Query<(
-    //     Entity,
-    //     &Speed,
-    //     &mut Transform,
-    //     (With<Laser>, With<FromPlayer>),
-    // )>,
-    // m: Movement
+    mut snake: ResMut<Snake>,
+    direction: Res<Direction>
 ){
     // Removes tail and adds a new head
+    //TODO: dont remove on consumed food
     snake.points.remove(0); // remove tail
-    let old_head = Point{ x: snake.points.last().expect("").x, y: snake.points.last().expect("").y};
+    let mut head = Point{ x: snake.points.last().expect("").x, y: snake.points.last().expect("").y};
 
-    //TODO: increment based on direction
-    snake.points.push(Point{ x: old_head.x, y: (old_head.y + 1)});
+    // Increment new head based on direction
+    match direction.d {
+        Movement::Up => head.y += 1,
+        Movement::Down => head.y -= 1,
+        Movement::Right => head.x += 1,
+        Movement::Left => head.x -= 1,
+    }
+    snake.points.push(Point{ x: head.x, y: head.y});
 
     println!("{:?}", snake.points);
 }
@@ -63,6 +66,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, mut windows: Re
     // default snake for testing
     let points = vec![Point{x:7,y:7}, Point{x:7,y:8}, Point{x:7,y:9}, Point{x:6,y:9}];
     commands.insert_resource(Snake {points: points});
+    commands.insert_resource(Direction{ d: Movement::Right });
 }
 
 fn main() {
