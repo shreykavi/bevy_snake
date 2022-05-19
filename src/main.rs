@@ -18,9 +18,25 @@ struct Snake {
     points: Vec<Point>,
 }
 
+#[derive(Debug, PartialEq, Eq)]
 enum Movement {
     // Variants
     Up, Down, Left, Right
+}
+
+fn keyboard_control(    
+    keyboard_input: Res<Input<KeyCode>>,
+    mut direction: ResMut<Direction>
+){
+    if keyboard_input.pressed(KeyCode::Left) && direction.d != Movement::Right {
+        direction.d = Movement::Left;
+    } else if keyboard_input.pressed(KeyCode::Right) && direction.d != Movement::Left {
+        direction.d = Movement::Right;
+    } else if keyboard_input.pressed(KeyCode::Up) && direction.d != Movement::Down {
+        direction.d = Movement::Up;
+    } else if keyboard_input.pressed(KeyCode::Down) && direction.d != Movement::Up {
+        direction.d = Movement::Down;
+    };
 }
 
 fn snake_movement(
@@ -85,5 +101,6 @@ fn main() {
             .with_run_criteria(FixedTimestep::step(1.0)) // controls speed of snake
             .with_system(snake_movement),
     )
+    .add_system(keyboard_control)
     .run();
 }
